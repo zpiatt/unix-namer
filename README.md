@@ -8,13 +8,13 @@
 Unix-namer is a Unix naming convention standardizer written in `python 3`.
 
 ### Unix-namer applies the following conventions:<br>
-- Pesky special character are removed. ( `'` `!` `$` `^` `&` `*` `(` `)` `[` `]` `|` `;` `~` `<` `>` `{` `}` `(` `)` `%` `` ` `` )
+- Pesky special characters are removed. ( `'` `!` `$` `^` `&` `*` `(` `)` `[` `]` `|` `;` `~` `<` `>` `{` `}` `(` `)` `%` `` ` `` )
 - Hideous spaces are converted to underscores.
-- Optionally, you can convert to all lowercase (Ken Thompson approved).
+- Optionally, you can convert to all lowercase ( Ken Thompson approved! ).
 
 ### Upcoming features:
-  - I'm working on allowing the selection of either `_` or `-` to replace spaces.
-  - I'm also working on an installer.
+  - I spent the long July 4th weekend getting this far, I'll work on documention next.
+    - I'm working on a man document, and the wiki.
 
 ### Recently added:
   - Added `-f` option to specify field separator (default is underscore).
