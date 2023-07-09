@@ -12,6 +12,7 @@ Unix-namer is a Unix naming convention standardizer written in `python 3`.
 
 ### Upcoming features:
   - I'm working on allowing the selection of either `_` or `-` to replace spaces.
+  - I'm also working on an installer.
 
 ### Recently added:
   - Added `-l` option to convert all directory and file names to lower case.

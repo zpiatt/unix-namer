@@ -1,3 +1,23 @@
+#!/usr/bin/env python3
+
+# Unix-namer: A Unix naming convention standardizer written in python 3.
+# https://github.com/zpiatt/unix-namer
+#
+# Copyright (C) 2023 Zac Piatt
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
 import os, sys, hashlib, argparse, re
 
 def get_file_hash(filepath):
@@ -45,7 +65,7 @@ def rename_files_and_dirs(directory, recursive, lowercase):
 def main():
     parser = argparse.ArgumentParser(usage='python unix-namer [OPTION]... [DIR]...',
                                     description='Convert file & directory names to a Unix-friendly naming convention.',
-                                    epilog='Version 1.0.0')
+                                    epilog='Version 1.0.1')
     parser.add_argument('directory', type=str, help='Target DIR')
     parser.add_argument('-r', '--recursive', action='store_true', help='Apply recursively.')
     parser.add_argument('-l', '--lowercase', action='store_true', help='Convert directory & file names to lowercase.')
