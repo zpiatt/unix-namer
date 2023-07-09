@@ -63,13 +63,13 @@ def rename_files_and_dirs(directory, recursive, lowercase):
     return conflicts
 
 def main():
-    parser = argparse.ArgumentParser(usage='python unix-namer [OPTION]... [DIR]...',
+    parser = argparse.ArgumentParser(usage='unix-namer [OPTION]... [DIR]...',
                                     description='Convert file & directory names to a Unix-friendly naming convention.',
-                                    epilog='Version 1.0.1')
+                                    epilog='Version 1.0.2')
     parser.add_argument('directory', type=str, help='Target DIR')
-    parser.add_argument('-r', '--recursive', action='store_true', help='Apply recursively.')
-    parser.add_argument('-l', '--lowercase', action='store_true', help='Convert directory & file names to lowercase.')
-    parser.add_argument('-o', '--output', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( python unix-namer [DIR] -o [FILE] )')
+    parser.add_argument('-r', action='store_true', help='Apply convention recursively.')
+    parser.add_argument('-l', action='store_true', help='Convert all names to lowercase.')
+    parser.add_argument('-o', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( unix-namer [DIR] -o [FILE] )')
     args = parser.parse_args()
 
     conflict_list = rename_files_and_dirs(args.directory, args.recursive, args.lowercase)
