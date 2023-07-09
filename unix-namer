@@ -27,7 +27,7 @@ def get_file_hash(filepath):
             hasher.update(chunk)
     return hasher.hexdigest()
 
-def rename_files_and_dirs(directory, recursive, lowercase):
+def rename_files_and_dirs(directory, recursive, lowercase, field_separator):
     if not os.path.isdir(directory):
         sys.exit(f"unix-namer: {directory}: Not a directory")
 
@@ -38,13 +38,14 @@ def rename_files_and_dirs(directory, recursive, lowercase):
 
         for filename in files + dirs:
             old_filepath = os.path.join(root, filename)
-            new_filename = re.sub(r'[_\s]+', '_', filename.replace(" - ", "-").translate(str.maketrans("", "", "'!$^&*()[]|;~`<>{}()%")))
+            new_filename = re.sub(r'[_\s]+', field_separator, filename.replace(" - ", "-").translate(str.maketrans("", "", "'!$^&*()[]|;~`<>{}()%")))
             new_filepath = os.path.join(root, new_filename)
 
             # if new_filename matches an existing filename
             if os.path.exists(new_filepath) and os.path.abspath(old_filepath) != os.path.abspath(new_filepath):
                 # Compare hashes (files only)
                 if os.path.isfile(old_filepath) and get_file_hash(old_filepath) == get_file_hash(new_filepath):
+                    print(f"{old_filepath} == {new_filepath}; removing {old_filepath}")
                     os.remove(old_filepath) # delete the old file if matching
                 else:
                     conflicts.append((old_filepath, new_filepath)) # add to conflicts if hashes don't match
@@ -65,14 +66,15 @@ def rename_files_and_dirs(directory, recursive, lowercase):
 def main():
     parser = argparse.ArgumentParser(usage='unix-namer [OPTION]... [DIR]...',
                                     description='Convert file & directory names to a Unix-friendly naming convention.',
-                                    epilog='Version 1.0.2')
+                                    epilog='Version 1.1.0')
     parser.add_argument('directory', type=str, help='Target DIR')
-    parser.add_argument('-r', action='store_true', help='Apply convention recursively.')
-    parser.add_argument('-l', action='store_true', help='Convert all names to lowercase.')
-    parser.add_argument('-o', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( unix-namer [DIR] -o [FILE] )')
+    parser.add_argument('-r', '--recursive', action='store_true', help='Apply convention recursively.')
+    parser.add_argument('-l', '--lowercase', action='store_true', help='Convert all names to lowercase.')
+    parser.add_argument('-o', '--output', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( unix-namer [DIR] -o [FILE] )')
+    parser.add_argument('-f', metavar='', type=str, default='_', help='Specify field separator. ( unix-namer -f - [DIR] )')
     args = parser.parse_args()
 
-    conflict_list = rename_files_and_dirs(args.directory, args.recursive, args.lowercase)
+    conflict_list = rename_files_and_dirs(args.directory, args.recursive, args.lowercase, args.f)
 
     if conflict_list:
         if args.output:

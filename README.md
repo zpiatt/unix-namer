@@ -17,9 +17,10 @@ Unix-namer is a Unix naming convention standardizer written in `python 3`.
   - I'm also working on an installer.
 
 ### Recently added:
+  - Added `-f` option to specify field separator (default is underscore).
   - Added `-l` option to convert all directory and file names to lower case.
   - Added `-r` option to apply changes recursively.
-  - Added `-o` option to output naming conflicts to target file ( `python unix-namer <directory> -o <output-file>` ).
+  - Added `-o` option to output naming conflicts to target file ( `unix-namer <directory> -o <output-file>` ).
 
 ### If you find any bugs, or you have ideas for improvement, please open an issue or send a PR.
 
