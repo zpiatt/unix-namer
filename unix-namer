@@ -1,0 +1,68 @@
+import os, sys, hashlib, argparse, re
+
+def get_file_hash(filepath):
+    hasher = hashlib.sha256()
+    with open(filepath, 'rb') as file:
+        while (chunk := file.read(4096)):
+            hasher.update(chunk)
+    return hasher.hexdigest()
+
+def rename_files_and_dirs(directory, recursive, lowercase):
+    if not os.path.isdir(directory):
+        sys.exit(f"unix-namer: {directory}: Not a directory")
+
+    conflicts = []
+    for root, dirs, files in os.walk(directory, topdown=False):
+        if not recursive and root != directory:
+            continue
+
+        for filename in files + dirs:
+            old_filepath = os.path.join(root, filename)
+            new_filename = re.sub(r'[_\s]+', '_', filename.replace(" - ", "-").translate(str.maketrans("", "", "'!$^&*()[]|;~`<>{}()%")))
+            new_filepath = os.path.join(root, new_filename)
+
+            # if new_filename matches an existing filename
+            if os.path.exists(new_filepath) and os.path.abspath(old_filepath) != os.path.abspath(new_filepath):
+                # Compare hashes (files only)
+                if os.path.isfile(old_filepath) and get_file_hash(old_filepath) == get_file_hash(new_filepath):
+                    os.remove(old_filepath) # delete the old file if matching
+                else:
+                    conflicts.append((old_filepath, new_filepath)) # add to conflicts if hashes don't match
+            else:
+                os.rename(old_filepath, new_filepath)
+
+    if lowercase:
+        for root, dirs, files in os.walk(directory, topdown=False):
+            for filename in files + dirs:
+                old_filepath = os.path.join(root, filename)
+                new_filename = filename.lower()
+                new_filepath = os.path.join(root, new_filename)
+                if old_filepath != new_filepath:
+                    os.rename(old_filepath, new_filepath)
+
+    return conflicts
+
+def main():
+    parser = argparse.ArgumentParser(usage='python unix-namer [OPTION]... [DIR]...',
+                                    description='Convert file & directory names to a Unix-friendly naming convention.',
+                                    epilog='Version 1.0.0')
+    parser.add_argument('directory', type=str, help='Target DIR')
+    parser.add_argument('-r', '--recursive', action='store_true', help='Apply recursively.')
+    parser.add_argument('-l', '--lowercase', action='store_true', help='Convert directory & file names to lowercase.')
+    parser.add_argument('-o', '--output', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( python unix-namer [DIR] -o [FILE] )')
+    args = parser.parse_args()
+
+    conflict_list = rename_files_and_dirs(args.directory, args.recursive, args.lowercase)
+
+    if conflict_list:
+        if args.output:
+            output_file = args.output
+            with open(output_file, 'w') as f:
+                for old, new in conflict_list:
+                    f.write(f"{old} != {new}\n")
+        else:
+            for old, new in conflict_list:
+                print(f"{old} != {new}")
+
+if __name__ == "__main__":
+    main()
