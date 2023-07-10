@@ -27,64 +27,50 @@ def get_file_hash(filepath):
             hasher.update(chunk)
     return hasher.hexdigest()
 
-def rename_files_and_dirs(directory, recursive, lowercase, field_separator):
+def rename_files_and_dirs(directory, recursive, lowercase, field_separator, in_place_edit):
     if not os.path.isdir(directory):
         sys.exit(f"unix-namer: {directory}: Not a directory")
 
-    conflicts = []
     for root, dirs, files in os.walk(directory, topdown=False):
         if not recursive and root != directory:
             continue
 
         for filename in files + dirs:
             old_filepath = os.path.join(root, filename)
+            if lowercase:
+                filename = filename.lower()
             new_filename = re.sub(r'[_\s]+', field_separator, filename.replace(" - ", "-").translate(str.maketrans("", "", "'!$^&*()[]|;~`<>{}()%")))
             new_filepath = os.path.join(root, new_filename)
 
-            # if new_filename matches an existing filename
             if os.path.exists(new_filepath) and os.path.abspath(old_filepath) != os.path.abspath(new_filepath):
-                # Compare hashes (files only)
                 if os.path.isfile(old_filepath) and get_file_hash(old_filepath) == get_file_hash(new_filepath):
-                    print(f"{old_filepath} == {new_filepath}; removing {old_filepath}")
-                    os.remove(old_filepath) # delete the old file if matching
+                    if in_place_edit:
+                        os.remove(old_filepath)
+                    else:
+                        print(f"{old_filepath} == {new_filepath}")
                 else:
-                    conflicts.append((old_filepath, new_filepath)) # add to conflicts if hashes don't match
+                    print(f"{old_filepath} != {new_filepath}")
             else:
-                os.rename(old_filepath, new_filepath)
-
-    if lowercase:
-        for root, dirs, files in os.walk(directory, topdown=False):
-            for filename in files + dirs:
-                old_filepath = os.path.join(root, filename)
-                new_filename = filename.lower()
-                new_filepath = os.path.join(root, new_filename)
                 if old_filepath != new_filepath:
-                    os.rename(old_filepath, new_filepath)
+                    if in_place_edit:
+                        os.rename(old_filepath, new_filepath)
+                    else:
+                        print(f"{old_filepath} -> {new_filepath}")
 
-    return conflicts
 
 def main():
     parser = argparse.ArgumentParser(usage='unix-namer [OPTION]... [DIR]...',
                                     description='Convert file & directory names to a Unix-friendly naming convention.',
-                                    epilog='Version 1.1.0')
+                                    epilog='Version 1.1.1')
     parser.add_argument('directory', type=str, help='Target DIR')
     parser.add_argument('-r', '--recursive', action='store_true', help='Apply convention recursively.')
     parser.add_argument('-l', '--lowercase', action='store_true', help='Convert all names to lowercase.')
-    parser.add_argument('-o', '--output', metavar='', type=str, help='Output naming conflicts to FILE, if any. ( unix-namer [DIR] -o [FILE] )')
-    parser.add_argument('-f', metavar='', type=str, default='_', help='Specify field separator. ( unix-namer -f - [DIR] )')
+    parser.add_argument('-f', '--field-separator', metavar='', type=str, default='_', help='Specify field separator. Defaults to underscore.')
+    parser.add_argument('-i', '--in-place-edit', action='store_true', help='edit filenames in place.')
+
     args = parser.parse_args()
 
-    conflict_list = rename_files_and_dirs(args.directory, args.recursive, args.lowercase, args.f)
-
-    if conflict_list:
-        if args.output:
-            output_file = args.output
-            with open(output_file, 'w') as f:
-                for old, new in conflict_list:
-                    f.write(f"{old} != {new}\n")
-        else:
-            for old, new in conflict_list:
-                print(f"{old} != {new}")
+    rename_files_and_dirs(args.directory, args.recursive, args.lowercase, args.field_separator, args.in_place_edit)
 
 if __name__ == "__main__":
     main()

@@ -20,11 +20,14 @@ Unix-namer is a Unix naming convention standardizer written in `python 3`.
   - Added `-f` option to specify field separator (default is underscore).
   - Added `-l` option to convert all directory and file names to lower case.
   - Added `-r` option to apply changes recursively.
-  - Added `-o` option to output naming conflicts to target file ( `unix-namer <directory> -o <output-file>` ).
+  - Added `-i` option for in-place edit. Without this option, changes will only be printed to the terminal.
+    - If you're going to make changes to file systems recursively...I want you to be sure!
+
+I removed the `-o` option. Capture the output with a redirection ( `unix-name /home/user > output.txt` )
 
 ### If you find any bugs, or you have ideas for improvement, please open an issue or send a PR.
 
 ## Disclaimer: 
-I've been a Linux system engineer for many years. I took 2 classes in Python at school and am in no way a qualified software engineer. **USE THIS SCRIPT AT YOUR OWN RISK!**
+I'm a Linux system engineer. I took two Python classes in school and am in no way a qualified software engineer. **USE THIS SCRIPT AT YOUR OWN RISK!**
 
 ### More: \[[Installation](https://github.com/zpiatt/unix-namer/wiki/Installation)\] \[[Wiki](https://github.com/zpiatt/unix-namer/wiki)\]
