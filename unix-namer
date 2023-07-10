@@ -42,7 +42,13 @@ def unix_namer(directory, recursive, lowercase, field_separator, in_place_edit):
             old_filepath = os.path.join(root, filename)
             if lowercase:
                 filename = filename.lower()
-            new_filename = re.sub(r'[_\s]+', field_separator, filename.replace(" - ", "-").translate(str.maketrans("", "", "'!$^&*()[]|;~`<>{}()%")))
+
+            special_chars = "'!$^&*()[]|;~`<>{}()%"
+            remove_special = str.maketrans(special_chars, len(special_chars) * ' ')
+
+            temp_filename = filename.translate(remove_special).replace(' ', field_separator)
+            new_filename = re.sub(fr'{field_separator}+', field_separator, temp_filename.rstrip(field_separator))
+
             new_filepath = os.path.join(root, new_filename)
 
             if os.path.exists(new_filepath) and os.path.abspath(old_filepath) != os.path.abspath(new_filepath):
