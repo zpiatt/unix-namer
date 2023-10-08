@@ -7,7 +7,7 @@
 
 Unix-namer is a Unix naming convention standardizer written in `python 3` that converts file & directory names to a Unix-friendly naming convention.
 
-### Unix-namer applies the following naming conventions:<br>
+### Unix-namer applies the following naming conventions:
 - Pesky special characters are removed ( `'` `!` `$` `^` `&` `*` `(` `)` `[` `]` `|` `;` `~` `<` `>` `{` `}` `(` `)` `%` `` ` ``. )
 - Hideous spaces are converted to underscores ( or specified field separator. )
 - Optionally, you can convert to all lowercase ( Ken Thompson approved! )
